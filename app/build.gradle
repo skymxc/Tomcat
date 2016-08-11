@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'     //Android项目
+
+android {
+    //当前编译使用的SDK版本
+    compileSdkVersion 23
+    //编译器版本，编译器版本必须比编译使用的版本高
+    buildToolsVersion "23.0.3"
+
+    //默认配置  eclipse项目的话 配置在 清单文件；
+    defaultConfig {
+
+        applicationId "com.skymxc.demo.tomcat"   //应用包名， 对应清单文件AndroidManifest.xml节点中的package属性的值  ，清单文件必须和这个保持一致
+        minSdkVersion 16                    // 最小SDK版本 ，应用支持的最小SDK版本
+        targetSdkVersion 23                 //最高的SDK版本  应用支持的最高版本
+        versionCode 1                       //版本名称对应的版本号 是一个整数
+        versionName "1.0"                   //版本名称  字符串
+    }
+    //编译项目的类型设置
+    buildTypes {
+        release {       //发布版本
+
+            minifyEnabled false         //是否开启混淆  混淆：代码在打包为apk 之后 可以反编译的，反编译之后可以看到代码，降低反编译后的可读性，也可能出现一些错误，
+            //使用的混淆文件配置 减少 app出现错误的几率 proguard-android.txt在SDK中  proguard-rules.pro在我们的项目中，一般修改这个
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        //可以设置debug 版本，一般使用默认，不用写
+
+    }
+}
+//库的设置 可以自动添加   删除类库必须自己动手了
+dependencies {
+    //包含一个文件树 包括：libs文件夹 包含里面的 jar架包 自动将 libs下的架包引入到项目， 有时候不编译不自动导入 可以手动导入
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    ///单元测试类库
+    testCompile 'junit:junit:4.12'
+    //网络类型库
+    //  有时候库在网络中，自动从网上 下载库
+    compile 'com.android.support:appcompat-v7:23.3.0'
+
+}

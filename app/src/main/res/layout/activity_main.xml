@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--帧 布局 最简单的布局 效率最高的 界面绘制的块 运行就快
+    只能 九个位置排版  可以通过盒子模型 排版
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.skymxc.demo.tomcat.MainActivity">
+
+    <!--布局：
+             RelativeLayout 相对布局
+             FrameLayout    ：帧布局
+             LinearLayout   ：线性布局
+
+      -->
+
+    <!--用于高速图像绘制时使用-->
+    <SurfaceView
+        android:id="@+id/surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    
+    <!--线性布局-->
+    <!--
+        layout_width    ：宽度
+        layout_height   ：高度
+        宽度和高度的取值
+            match_parent    :  充满父容器的剩余空间; 匹配父容器(match_parent)
+            wrap_content    ： 包裹自己里面的内容的大小; 跟随内容 内容多少尺寸 就是多少尺寸，
+            固定值 如 50dp   ：自已定义 固定尺寸
+
+        orientation     :方向 ； 必须设置的属性
+            取值：
+                horizontal  ：横向排布；
+                vertical    ：竖向排布；
+        weightSum           ： 权重总和  ；所有子项的，默认 是自动相加的和
+        layout_gravity      : 重心，设置在父容器内的重心位置 如 左上，右上，中间 ， 可以组合使用
+            取值：
+        clickable           ：是否能被点击
+            取值            ：true,false
+    事件：
+        onClick     :点击事件
+   特有属性可供子空间使用
+    -->
+    
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom|center_horizontal"
+
+        >
+
+
+        <!--图片空间-->
+        <!--
+            layout_weight       :LinearLayout特有属性  在宽度为0dp时  按照比例分配父容器的宽度
+                取值  ：浮点数   ；比例
+            src                 ：指定引用的图片资源
+            id                  :唯一标识  @+id  标识增加一个id 在当前文件是不能重复，但是在不在一个文件的话就能重复
+        -->
+        <ImageView
+            android:id="@+id/cymbal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@mipmap/cymbal"
+            android:onClick="click"
+            android:clickable="true"/>
+
+        <ImageView
+            android:id="@+id/scratch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@mipmap/scratch"
+            android:onClick="click"
+            android:clickable="true"/>
+
+        <ImageView
+            android:id="@+id/pie"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@mipmap/pie"
+            android:onClick="click"
+            android:clickable="true"/>
+
+        <ImageView
+            android:id="@+id/fart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@mipmap/fart"
+            android:onClick="click"
+            android:clickable="true"/>
+
+        <ImageView
+            android:id="@+id/drink"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@mipmap/drink"
+            android:onClick="click"
+            android:clickable="true"/>
+
+        <ImageView
+            android:id="@+id/eat"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@mipmap/eat"
+            android:onClick="click"
+            android:clickable="true"/>
+
+    </LinearLayout>
+
+
+
+</FrameLayout>
