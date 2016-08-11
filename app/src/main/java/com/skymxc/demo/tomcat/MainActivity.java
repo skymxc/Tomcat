@@ -79,13 +79,13 @@ public class MainActivity extends AppCompatActivity {
          */
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            Log.e("aaaa","======surfaceCreated=========");
+            Log.i("tag","======begin set surfaceView =========");
 
 
             //获取surfaceView 的宽高
             int svWidth= sv.getWidth();
             int svHeight = sv.getHeight();
-            Log.e("aaaa",svWidth+"======surfaceCreated========="+svHeight);
+            Log.i("tag",svWidth+"======surfaceCreated========="+svHeight);
             //目标矩形 画布上的矩形
             dst = new Rect(0,0,svWidth,svHeight);
 

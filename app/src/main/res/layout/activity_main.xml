@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context="com.skymxc.demo.tomcat.MainActivity">
 
     <!--布局：
@@ -51,7 +50,7 @@
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:layout_gravity="bottom|center_horizontal"
-
+        android:gravity="right"
         >
 
 
