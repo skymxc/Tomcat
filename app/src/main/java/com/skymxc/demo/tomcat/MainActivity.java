@@ -6,12 +6,20 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +53,30 @@ public class MainActivity extends AppCompatActivity {
     //第六项 eat
     private Object[] eat ={"eat_",40};
 
+    //临时图片
+    Object[] temp = null;
+
+    //声音池 短声音播放
+    private SoundPool soundPool ;
+
+    //是否正在播放动画
+    private boolean isPlaying =false ;
+
+    //声音池id集合
+    private List<Integer>  soundIds = null;
+
+    //声音资源文件 顺序要和图片 顺序一致
+    private int[] resids ={R.raw.cymbal,R.raw.scratch,R.raw.pie,R.raw.fart,R.raw.drink,R.raw.eat};
+
+    //定时器
+    private Timer timer =null;
+
+    //音频池的id
+    private int index ;
+
+    //每个项的声音延迟 按每项的顺序
+    private  int[] delay = {0,2000,2000,200,5000,2000};
+
     /**
      * 创建activity时调用的方法
      * 进行初始化的操作
@@ -64,6 +96,29 @@ public class MainActivity extends AppCompatActivity {
 
         //添加回调
         holder.addCallback(callback);
+
+        //参数1 最多几个声音 参数2 声音类型 AudioManager是声音管理 各种静态类型
+        soundPool = new SoundPool(6, AudioManager.STREAM_MUSIC,1);
+        //初始化 资源id集合
+        soundIds = new ArrayList<>();
+        //遍历音频资源数组 加载到声音池
+        Log.e("tag","======init========="+soundPool);
+        for(int a: resids){
+
+            //加载一个声音，加载到声音池 参数1 上下文，参数2. 音频资源id  参数3 播放的优先级\
+            //返回一个 id 音频在声音池的id
+            int id = soundPool.load(MainActivity.this,a,1);
+
+            //将声音池的id添加到 集合
+            soundIds.add(id);
+        }
+
+        // 初始化 Timer
+        timer= new Timer();
+
+
+
+
     }
 
     /**
@@ -173,66 +228,97 @@ public class MainActivity extends AppCompatActivity {
      *      规定：
      *          修饰符 必须 public
      *          返回值 必须 void
-     *          方法名称 大小写区分
-     *          参数 必须是一个View
+     *          方法名称 大小写区分 xml文件必须一致
+     *          参数 必须是一个View 只能有一个view
      * @param v 被点击的view
      */
     public void click(View v){
+        if (isPlaying){
+            Toast.makeText(MainActivity.this,"再快点屏就戳烂了，慢点戳！",Toast.LENGTH_SHORT).show();
+            return;
+        }
         //获取被点击view的id
        int id = v.getId();
 
-        //临时图片
-        Object[] temp = null;
+
         //匹配id
         switch (id){
             case  R.id.cymbal:
                 Log.e("aaa","==================cymbal==============");
                 temp = cymbal;
-
+                index=0;
                 break;
             case  R.id.drink:
                 Log.e("aaa","==================drink==============");
                 temp = drink;
+                index=4;
                 break;
             case  R.id.eat:
                 Log.e("aaa","==================eat==============");
                 temp=eat;
+                index=5;
                 break;
             case  R.id.fart:
                 Log.e("aaa","==================fart==============");
                 temp = fart;
+                index=3;
                 break;
             case  R.id.pie:
                 Log.e("aaa","==================pie==============");
                 temp = pie ;
+                index=2;
                 break;
             case  R.id.scratch:
                 Log.e("aaa","==================scratch==============");
                 temp = scratch;
+                index=1;
                 break;
             default:
                 return;
         }
+        //一个新线程
+       new Thread(){
+           @Override
+           public void run() {
+               isPlaying=true;
 
-        //获取应用包名
-        String pgkName =getPackageName();
-        for (int i=0;i<(Integer)temp[1];i++){
+            //利用timer 进行延时  ，TimerTask的一个对象只能执行一回
+           timer.schedule(new TimerTask() {
+               @Override
+               public void run() {
+                   //播放声音
+                   int id =  soundIds.get(index);
+                   //播放声音 ，
+                   // 参数1 是 声音池的id，参数2左声道，参数3右声道，参数5是循环参数
+                   //参数 4 播放优先级，参数6比特率
+                   soundPool.play(id,1,1,1,0,1);
+               }
+           }, delay[index]);
 
-            //资源名
-            String name =i<10?temp[0].toString()+0+i:temp[0].toString()+i;
 
-            //获取资源id 参数1 资源名(无后缀)，参数2 哪个文件夹，参数3 包名
-            int rId = resources.getIdentifier(name,"mipmap",pgkName);
-            drawBitmap(rId);
+               //获取应用包名
+               String pgkName =getPackageName();
+               for (int i=0;i<(Integer)temp[1];i++){
 
-            //睡眠60ms
-            try {
-                Thread.sleep(60);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                   //资源名
+                   String name =i<10?temp[0].toString()+0+i:temp[0].toString()+i;
 
-        }
+                   //获取资源id 参数1 资源名(无后缀)，参数2 哪个文件夹，参数3 包名
+                   int rId = resources.getIdentifier(name,"mipmap",pgkName);
+                   drawBitmap(rId);
+
+                   //睡眠60ms
+                   try {
+                       Thread.sleep(60);
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                   }
+
+               }
+               isPlaying=false;
+
+           }
+       }.start();
     }
 
 
