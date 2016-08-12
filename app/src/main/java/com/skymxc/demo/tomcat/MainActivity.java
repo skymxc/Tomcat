@@ -11,6 +11,7 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -53,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     //第六项 eat
     private Object[] eat ={"eat_",40};
 
+    //踩脚
+    private Object[] knockout= {"knockout_",81};
+
     //临时图片
     Object[] temp = null;
 
@@ -66,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Integer>  soundIds = null;
 
     //声音资源文件 顺序要和图片 顺序一致
-    private int[] resids ={R.raw.cymbal,R.raw.scratch,R.raw.pie,R.raw.fart,R.raw.drink,R.raw.eat};
+    private int[] resids ={R.raw.cymbal,R.raw.scratch,R.raw.pie,R.raw.fart,R.raw.drink,R.raw.eat,R.raw.knockout};
 
     //定时器
     private Timer timer =null;
@@ -74,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
     //音频池的id
     private int index ;
 
-    //每个项的声音延迟 按每项的顺序
-    private  int[] delay = {0,2000,2000,200,5000,2000};
+    //每个项的声音延迟  毫秒  按每项的顺序
+    private  int[] delay = {0,2000,1000,200,5000,2000,0};
 
     /**
      * 创建activity时调用的方法
@@ -98,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         holder.addCallback(callback);
 
         //参数1 最多几个声音 参数2 声音类型 AudioManager是声音管理 各种静态类型
-        soundPool = new SoundPool(6, AudioManager.STREAM_MUSIC,1);
+        soundPool = new SoundPool(7, AudioManager.STREAM_MUSIC,1);
         //初始化 资源id集合
         soundIds = new ArrayList<>();
         //遍历音频资源数组 加载到声音池
@@ -276,50 +280,83 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return;
         }
-        //一个新线程
-       new Thread(){
-           @Override
-           public void run() {
-               isPlaying=true;
+        startAnimation(temp);
 
-            //利用timer 进行延时  ，TimerTask的一个对象只能执行一回
-           timer.schedule(new TimerTask() {
-               @Override
-               public void run() {
-                   //播放声音
-                   int id =  soundIds.get(index);
-                   //播放声音 ，
-                   // 参数1 是 声音池的id，参数2左声道，参数3右声道，参数5是循环参数
-                   //参数 4 播放优先级，参数6比特率
-                   soundPool.play(id,1,1,1,0,1);
-               }
-           }, delay[index]);
-
-
-               //获取应用包名
-               String pgkName =getPackageName();
-               for (int i=0;i<(Integer)temp[1];i++){
-
-                   //资源名
-                   String name =i<10?temp[0].toString()+0+i:temp[0].toString()+i;
-
-                   //获取资源id 参数1 资源名(无后缀)，参数2 哪个文件夹，参数3 包名
-                   int rId = resources.getIdentifier(name,"mipmap",pgkName);
-                   drawBitmap(rId);
-
-                   //睡眠60ms
-                   try {
-                       Thread.sleep(60);
-                   } catch (InterruptedException e) {
-                       e.printStackTrace();
-                   }
-
-               }
-               isPlaying=false;
-
-           }
-       }.start();
     }
 
 
+    private void startAnimation(final Object[] temp) {
+        //一个新线程
+        new Thread(){
+            @Override
+            public void run() {
+                isPlaying=true;
+
+             //利用timer 进行延时  ，TimerTask的一个对象只能执行一回
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    //播放声音
+                    int id =  soundIds.get(index);
+                    //播放声音 ，
+                    // 参数1 是 声音池的id，参数2左声道，参数3右声道，参数5是循环参数
+                    //参数 4 播放优先级，参数6比特率
+                    soundPool.play(id,1,1,1,0,1);
+                }
+            }, delay[index]);
+
+
+                //获取应用包名
+                String pgkName =getPackageName();
+                for (int i=0;i<(Integer)temp[1];i++){
+
+                    //资源名
+                    String name =i<10?temp[0].toString()+0+i:temp[0].toString()+i;
+
+                    //获取资源id 参数1 资源名(无后缀)，参数2 哪个文件夹，参数3 包名
+                    int rId = resources.getIdentifier(name,"mipmap",pgkName);
+                    drawBitmap(rId);
+
+                    //睡眠60ms
+                    try {
+                        Thread.sleep(60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                isPlaying=false;
+
+            }
+        }.start();
+    }
+
+
+    //统计触发几次
+    int count  ;
+
+    /**
+     * 屏幕触摸事件
+     * @param event 一次触摸事件
+     * @return
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        // 触摸:按下 移动 ，抬起
+
+
+        //event.getAction() 获取事件的类型
+        if (event.getAction()==MotionEvent.ACTION_DOWN){
+            //按下
+            count++;
+            if (count==5){
+                count=0;
+                index=6;  //改变下标
+                startAnimation(knockout);
+            }
+        }
+
+        return super.onTouchEvent(event);
+    }
 }
