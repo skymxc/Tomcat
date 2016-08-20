@@ -345,18 +345,22 @@ public class MainActivity extends AppCompatActivity {
 
         // 触摸:按下 移动 ，抬起
 
+       if (isPlaying) {
+        Toast.makeText(MainActivity.this,"wait a little",Toast.LENGTH_SHORT);
 
-        //event.getAction() 获取事件的类型
-        if (event.getAction()==MotionEvent.ACTION_DOWN){
-            //按下
-            count++;
-            if (count==5){
-                count=0;
-                index=6;  //改变下标
-                startAnimation(knockout);
-            }
-        }
-
+       }else {
+           //event.getAction() 获取事件的类型
+           if (event.getAction() == MotionEvent.ACTION_DOWN) {
+               //按下
+               count++;
+               if (count == 5) {
+                   count = 0;
+                   index = 6;  //改变下标
+                   startAnimation(knockout);
+               }
+           }
+       }
         return super.onTouchEvent(event);
     }
+
 }
